@@ -65,6 +65,9 @@ public:
     void Draw();
     void Update();
     void IntegrateVelvet(float dt);
-    void CheckCollision();
+    void CheckCollision(float cubeSize);
+    float dotProduct(float* v1, float* v2);
+    float* vectorTimesScalar(float* v, float s);
+    float* substractVectors(float* v1, float* v2);
     bool OnCollisionParticle(cParticle* other);
 };

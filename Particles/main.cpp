@@ -36,6 +36,7 @@
 #include "cParticle.hpp"
 
 const int HowManyBAlzzz = 100;
+const float cubeSize = 10;
 cParticle* p;
 cParticle* p1;
 cParticle* p2;
@@ -51,7 +52,7 @@ GLfloat* Ia;
 GLfloat* Id;
 GLfloat* Is;
 
-float Force (float min, float max){
+float randomBetween (float min, float max){
     float force = min + (max - min) * (float)rand() / RAND_MAX;
     return force;
 }
@@ -80,21 +81,22 @@ void init() // FOR GLUT LOOP
     alpha = new GLfloat[1];
     alpha[0] = 50.0f;
     
+    // minX, maxX, minY, maxY, minZ, maxZ
     float* bounds = new float[6];
-    bounds[0] = 0.1f;
-    bounds[1] = 0.1f;
-    bounds[2] = 15;
-    bounds[3] = 15;
-    bounds[4] = 0.1f;
-    bounds[5] = 0.1f;
+    bounds[0] = 0;
+    bounds[1] = 0;
+    bounds[2] = 7;
+    bounds[3] = 7;
+    bounds[4] = 0;
+    bounds[5] = 0;
     
     for(int i = 0; i < HowManyBAlzzz; i++)
     {
         
         p = new cParticle(bounds, 5, 0.3f);  // position, mass, radius
         p->forces[1] += p->mass * -9.81f;
-        p->forces[0] += Force(-1000, 1000);
-        p->forces[2] += Force(-1000, 1000);
+        p->forces[0] += randomBetween(-1000, 1000);
+        p->forces[2] += randomBetween(-1000, 1000);
         p->dragForce[1] += p->area;
         particles[i] = p;
     }
@@ -144,11 +146,12 @@ void display()                                                       // Called f
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, kd);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ks);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, alpha);
+    
     glBegin(GL_POLYGON);                // Draw A Quad
-    glVertex3f(-15.0f, 0.0f, -15.0f);    // Top Left
-    glVertex3f( 15.0f, 0.0f, -15.0f);    // Top Right
-    glVertex3f( 15.0f, 0.0f, 15.0f);    // Bottom Right
-    glVertex3f(-15.0f, 0.0f, 15.0f);    // Bottom Left
+    glVertex3f(-15.0f, -10.0f, -15.0f);    // Top Left
+    glVertex3f( 15.0f, -10.0f, -15.0f);    // Top Right
+    glVertex3f( 15.0f, -10.0f, 15.0f);    // Bottom Right
+    glVertex3f(-15.0f, -10.0f, 15.0f);    // Bottom Left
     glEnd();
     
     for(int i = 0; i < HowManyBAlzzz; i++)
@@ -180,7 +183,7 @@ void idle()                                                          // Called w
         bool coshado = false;
         particles[i]->forces[1] += p->mass * -9.81f;
         particles[i]->IntegrateVelvet(0.001f);
-        particles[i]->CheckFloorCollision();
+        particles[i]->CheckCollision(cubeSize);
         p1 = particles[i];
         
         for(int j = 0; j < HowManyBAlzzz; j++){

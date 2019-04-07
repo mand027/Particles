@@ -112,14 +112,74 @@ void cParticle::Draw()
     glPopMatrix();
 }
 
-void cParticle::CheckCollision()
+void cParticle::CheckCollision(float cubeSize)
 {
-    if(position[1] <= radius)
+//    float* normal = new float[3];
+//
+//    if (position[1] + radius <= -1 * cubeSize || position[1] + radius >= cubeSize) {
+//        // Checar porqué entró al if
+//        bool what = position[1] + radius >= cubeSize ? true : false;
+//
+//        // Si entró por chocar con la tapa de arriba
+//        if (what) {
+//            normal[0] = normal[2] = 0;
+//            normal[1] = -1;
+//        } else {
+//            normal[0] = normal[2] = 0;
+//            normal[1] = 1;
+//        }
+//
+//        float* helper = vectorTimesScalar(vectorTimesScalar(substractVectors(normal, forces), 2 * dotProduct(normal, forces)), restitutionCoeficient);
+//        position[1] = what ? position[1] - radius : position[1] + radius;
+//        forces[1] = helper[1];
+//        dragForce[1] = -dragForce[1];
+//    }
+    if (position[1] + radius <= -cubeSize || position[1] + radius >= cubeSize)
     {
-        position[1] = radius;
+        bool what = position[1] + radius >= cubeSize ? true : false;
+        
+        position[1] = what ? cubeSize - radius : -cubeSize + radius;
         forces[1] = -forces[1]*restitutionCoeficient;
         dragForce[1] = -dragForce[1];
+        
     }
+    
+    if (position[0] + radius <= -cubeSize || position[0] + radius >= cubeSize) {
+        bool what = position[0] + radius >= cubeSize ? true : false;
+        
+        position[0] = what ? cubeSize - radius : -cubeSize + radius;
+        forces[0] = -forces[0] * restitutionCoeficient;
+        dragForce[0] = -dragForce[0];
+    }
+    
+    if (position[2] + radius <= -cubeSize || position[2] + radius >= cubeSize) {
+        bool what = position[2] + radius >= cubeSize ? true : false;
+        
+        position[2] = what ? cubeSize - radius : -cubeSize + radius;
+        forces[2] = -forces[2] * restitutionCoeficient;
+        dragForce[2] = -dragForce[2];
+    }
+    
+}
+
+float cParticle::dotProduct(float *v1, float *v2) {
+    return (v1[0] + v2[0]) * (v1[1] + v2[1]) * (v1[2] + v2[2]);
+}
+
+float* cParticle::vectorTimesScalar(float *v, float s) {
+    float* result = new float[3];
+    result[0] = v[0] * s;
+    result[1] = v[1] * s;
+    result[2] = v[2] * s;
+    return result;
+}
+
+float* cParticle::substractVectors(float *v1, float *v2) {
+    float* result = new float[3];
+    result[0] = v1[0] - v2[0];
+    result[1] = v1[1] - v2[1];
+    result[2] = v1[2] - v2[2];
+    return result;
 }
 
 bool cParticle::OnCollisionParticle(cParticle* other)
