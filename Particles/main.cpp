@@ -35,8 +35,8 @@
 #include <iostream>
 #include "cParticle.hpp"
 
-const int HowManyBAlzzz = 100;
-const float cubeSize = 10;
+const int HowManyBAlzzz = 1000;
+const float cubeSize = 15;
 cParticle* p;
 cParticle* p1;
 cParticle* p2;
@@ -85,15 +85,15 @@ void init() // FOR GLUT LOOP
     float* bounds = new float[6];
     bounds[0] = 0;
     bounds[1] = 0;
-    bounds[2] = 7;
-    bounds[3] = 7;
+    bounds[2] = 6;
+    bounds[3] = 9;
     bounds[4] = 0;
     bounds[5] = 0;
     
     for(int i = 0; i < HowManyBAlzzz; i++)
     {
         
-        p = new cParticle(bounds, 5, 0.3f);  // position, mass, radius
+        p = new cParticle(bounds, 20, 0.25f);  // position, mass, radius
         p->forces[1] += p->mass * -9.81f;
         p->forces[0] += randomBetween(-1000, 1000);
         p->forces[2] += randomBetween(-1000, 1000);
@@ -138,7 +138,7 @@ void display()                                                       // Called f
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);              // Clear color and depth buffers.
     glLoadIdentity();                                                // Reset 3D view matrix.
-    gluLookAt(0.0, 15.0, 45.0,                                        // Where the camera is.
+    gluLookAt(0.0, 30.0, 60.0,                                        // Where the camera is.
               0.0, 0.0, 0.0,                                         // To where the camera points at.
               0.0, 1.0, 0.0);                                        // "UP" vector.
     
@@ -148,10 +148,10 @@ void display()                                                       // Called f
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, alpha);
     
     glBegin(GL_POLYGON);                // Draw A Quad
-    glVertex3f(-15.0f, -10.0f, -15.0f);    // Top Left
-    glVertex3f( 15.0f, -10.0f, -15.0f);    // Top Right
-    glVertex3f( 15.0f, -10.0f, 15.0f);    // Bottom Right
-    glVertex3f(-15.0f, -10.0f, 15.0f);    // Bottom Left
+    glVertex3f(-15.0f, -15.5f, -15.0f);    // Top Left
+    glVertex3f( 15.0f, -15.5f, -15.0f);    // Top Right
+    glVertex3f( 15.0f, -15.5f, 15.0f);    // Bottom Right
+    glVertex3f(-15.0f, -15.5f, 15.0f);    // Bottom Left
     glEnd();
     
     for(int i = 0; i < HowManyBAlzzz; i++)
@@ -166,7 +166,7 @@ void reshape(int x, int y)                                           // Called w
 {
     glMatrixMode(GL_PROJECTION);                                     // Go to 2D mode.
     glLoadIdentity();                                                // Reset the 2D matrix.
-    gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 80.0);      // Configure the camera lens aperture.
+    gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 100.0);      // Configure the camera lens aperture.
     glMatrixMode(GL_MODELVIEW);                                      // Go to 3D mode.
     glViewport(0, 0, x, y);                                          // Configure the camera frame dimensions.
     gluLookAt(0.0, 0.0, 4.0,
@@ -181,7 +181,7 @@ void idle()                                                          // Called w
     for(int i = 0; i < HowManyBAlzzz; i++)
     {
         bool coshado = false;
-        particles[i]->forces[1] += p->mass * -9.81f;
+        particles[i]->forces[1] += p->mass * -9.81f;//cubeSize;
         particles[i]->IntegrateVelvet(0.001f);
         particles[i]->CheckCollision(cubeSize);
         p1 = particles[i];

@@ -17,7 +17,7 @@ cParticle::cParticle(float* bounds, float m, float r)
     float minKs = 0.4f;
     float maxKs = 0.8f;
     
-    restitutionCoeficient = 0.75f;
+    restitutionCoeficient = 0.65f;
     radius = r;
     mass = m;
     area = 4.0f * M_PI * radius*radius;
@@ -114,6 +114,7 @@ void cParticle::Draw()
 
 void cParticle::CheckCollision(float cubeSize)
 {
+    
 //    float* normal = new float[3];
 //
 //    if (position[1] + radius <= -1 * cubeSize || position[1] + radius >= cubeSize) {
@@ -134,28 +135,28 @@ void cParticle::CheckCollision(float cubeSize)
 //        forces[1] = helper[1];
 //        dragForce[1] = -dragForce[1];
 //    }
-    if (position[1] + radius <= -cubeSize || position[1] + radius >= cubeSize)
-    {
-        bool what = position[1] + radius >= cubeSize ? true : false;
-        
-        position[1] = what ? cubeSize - radius : -cubeSize + radius;
-        forces[1] = -forces[1]*restitutionCoeficient;
-        dragForce[1] = -dragForce[1];
-        
-    }
     
     if (position[0] + radius <= -cubeSize || position[0] + radius >= cubeSize) {
         bool what = position[0] + radius >= cubeSize ? true : false;
         
-        position[0] = what ? cubeSize - radius : -cubeSize + radius;
+        position[0] = oldPos[0]; //what ? cubeSize - radius : -cubeSize + radius;
         forces[0] = -forces[0] * restitutionCoeficient;
         dragForce[0] = -dragForce[0];
+    }
+    
+    if (position[1] + radius <= -cubeSize || position[1] + radius >= cubeSize)
+    {
+        bool what = position[1] + radius >= cubeSize ? true : false;
+        
+        position[1] = oldPos[1]; //what ? cubeSize - radius : -cubeSize + radius;
+        forces[1] = -forces[1] * restitutionCoeficient;
+        dragForce[1] = -dragForce[1];
     }
     
     if (position[2] + radius <= -cubeSize || position[2] + radius >= cubeSize) {
         bool what = position[2] + radius >= cubeSize ? true : false;
         
-        position[2] = what ? cubeSize - radius : -cubeSize + radius;
+        position[2] = oldPos[2]; //what ? cubeSize - radius : -cubeSize + radius;
         forces[2] = -forces[2] * restitutionCoeficient;
         dragForce[2] = -dragForce[2];
     }
@@ -199,6 +200,23 @@ bool cParticle::OnCollisionParticle(cParticle* other)
     float dist2 = dx+dy+dz;
     if( dist2 < sumR2){
         chokado = true;
+        
+        for(int i = 0; i < 3; i++){
+            float va = position[i] - oldPos[i];
+            float vb = other->position[i] - other->oldPos[i];
+            if(va*vb < 0){
+                forces[i] = -forces[i];
+                other->forces[i] = -other->forces[i];
+            }
+            if(va<0){
+                position[i] += 0.01f;
+                other->position[i] -= 0.01f;
+            }
+            else{
+                position[i] -= 0.01f;
+                other->position[i] += 0.01f;
+            }
+        }
     }
     else{
         chokado = false;
